@@ -1,26 +1,42 @@
-import { createContext, useContext } from "react";
-import {createUserWithEmailAndPassword} from 'firebase/auth'
-import {auth} from '../firebase.js'
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+import { auth } from "../firebase.js";
 
-export const authContext = createContext()
-export const useAuth = () =>{
-    const context=useContext(authContext)
+export const authContext = createContext();
+export const useAuth = () => {
+  const context = useContext(authContext);
 
-    if(!context)throw new Error('there is not provider')
+  if (!context) throw new Error("there is not provider");
 
-    return context
+  return context;
+};
 
-}
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-export function AuthProvider ({children}){
-    const signup= (email, password)=> createUserWithEmailAndPassword(auth, email, password)
+  const signup = (email, password) =>
+    createUserWithEmailAndPassword(auth, email, password);
+  const login = (email, password) =>
+    signInWithEmailAndPassword(auth, email, password);
+  const logout = () => signOut(auth);
 
-    return (
-        <authContext.Provider value={{signup}}>
-            {children}
+  useEffect(() => {
+    onAuthStateChanged(auth, (currenUser) => {
+      setUser(currenUser);
+      setLoading(false)
+    });
+    console.log("auth provider loader");
+  }, []);
 
-        </authContext.Provider>
-    )
-
-
+  return (
+    <authContext.Provider value={{ signup, login, user, logout, loading }}>
+      {children}
+    </authContext.Provider>
+  );
 }

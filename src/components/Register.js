@@ -7,6 +7,7 @@ export function Register() {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false); // Nuevo estado
 
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ export function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(' ')
+    setLoading(true); // Cambio de estado
+
     try {
       await signup(user.email, user.password);
       navigate("/");
@@ -35,6 +38,8 @@ export function Register() {
 
       }
         
+    } finally {
+      setLoading(false); // Cambio de estado
     }
   };
 
@@ -60,7 +65,7 @@ export function Register() {
           placeholder="******"
         />
 
-        <button>Register</button>
+        <button disabled={loading}>{loading ? 'Loading...' : 'Register'}</button> {/* Botón deshabilitado mientras se carga */}
       </form>
     </div>
   );
