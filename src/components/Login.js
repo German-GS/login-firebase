@@ -7,6 +7,7 @@ export function Login(){
         password: ""
     })
     return <div>
+        <h1>login</h1>
         <form>
             <input type="email" name="email" id="email"/>
             <input type="password" name="password" id="password"/>
