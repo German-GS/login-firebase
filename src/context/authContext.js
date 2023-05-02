@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
+  GoogleAuthProvider,
+  signInWithPopup
 } from "firebase/auth";
 import { auth } from "../firebase.js";
 
@@ -20,22 +22,30 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
   const signup = (email, password) =>
     createUserWithEmailAndPassword(auth, email, password);
+
   const login = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
+
   const logout = () => signOut(auth);
 
+  const loginWithGoogle =()=> { //hace la autenticacion por Google con una ventana emergente
+    const googleProvider = new GoogleAuthProvider()
+    return signInWithPopup(auth, googleProvider)
+  }
+
   useEffect(() => {
-    onAuthStateChanged(auth, (currenUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currenUser) => {
       setUser(currenUser);
       setLoading(false)
     });
-    console.log("auth provider loader");
+    return () => unsubscribe()
   }, []);
 
   return (
-    <authContext.Provider value={{ signup, login, user, logout, loading }}>
+    <authContext.Provider value={{ signup, login, user, logout, loading, loginWithGoogle }}>
       {children}
     </authContext.Provider>
   );

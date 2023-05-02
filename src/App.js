@@ -3,13 +3,18 @@ import { Home } from "./components/Home.js";
 import { Login } from "./components/Login.js";
 import { Register } from "./components/Register.js";
 import { AuthProvider } from "./context/authContext.js";
+import { ProtectedRoute } from "./components/ProtectedRoute.js";
 
 function App() {
   return (
-    <div class="bg-slate-300 h-screen text-black flex">
+    <div className="bg-slate-300 h-screen text-black flex">
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Home />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
